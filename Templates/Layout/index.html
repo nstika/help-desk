@@ -1,0 +1,282 @@
+{% load static %}
+<html lang="en" data-layout="vertical" data-topbar="dark" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="enable">
+<meta http-equiv="refresh" content="900"/>
+<head>
+
+    <meta charset="utf-8" />
+    {% block PageTitle %}{% endblock %}
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="This software based on Software Department" name="description" />
+    <meta content="Waaxda Software-ka" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href= {% static "assets/logo/task_logo.png" %}>
+    <link rel="stylesheet" href={% static "assets/libs/dragula/dragula.min.css"%} />
+
+    <!-- jsvectormap css -->
+    <link href={% static "assets/libs/jsvectormap/css/jsvectormap.min.css"%} rel="stylesheet" type="text/css" />
+
+    <!--Swiper slider css-->
+    <link href={% static "assets/libs/swiper/swiper-bundle.min.css"%} rel="stylesheet" type="text/css" />
+
+    <!-- Layout config Js -->
+    <script src={% static "assets/js/layout.js"%}></script>
+    <!-- Bootstrap Css -->
+    <link href={% static "assets/css/bootstrap.min.css"%} rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href={% static "assets/css/icons.min.css"%} rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href={% static "assets/css/app.min.css"%} rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href={% static "assets/css/custom.min.css"%} rel="stylesheet" type="text/css" />
+    
+     
+    <!-- Data table css -->
+    <link href={% static "assets/scripts/datatable/dataTables.bootstrap4.min.css"%} rel="stylesheet" />
+    <link href={% static "assets/scripts/datatable/responsivebootstrap4.min.css"%} rel="stylesheet" />
+
+    <!-- Sweet Alert css-->
+    <link href={% static "assets/libs/sweetalert2/sweetalert2.min.css"%} rel="stylesheet" type="text/css" />
+
+   
+
+    <style>
+    .users-body .row .item{
+        margin-bottom: 20px;
+        margin-left: 5px;
+        margin-right: 5px;
+        cursor: pointer;
+        border-bottom: 1px solid black;
+        transition: .5s;
+    }
+
+    .users-body .row .item:last-child{
+        border-bottom: none;
+        margin-bottom: 0px;
+    }
+
+    .users-body .row .item:hover{
+        padding-top: 10px;
+        color: white;
+        background-color: #9485d6;
+        transition: .5s;
+    }
+
+    /* Chnage profile */
+    .preview_image{
+        width: 100%;
+        height: 300px;
+        margin-bottom: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .preview_image img{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        object-fit: cover;
+    }
+</style>
+
+</head>
+
+<body>
+
+    
+    <div class="alert-toast d-none">
+        <button  id='clickToast' type="button" data-toast data-toast-text="" data-toast-gravity="top" data-toast-position="right" data-toast-duration="3000" data-toast-close="close" class="btn btn-primary w-xs">Top Right</button>
+    </div>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+  <!-- ========== HEADER ========== -->
+        {% include './header.html' %}
+        <!-- ========== App Menu ========== -->
+        {% include './navigation.html' %}
+        <!-- Left Sidebar End -->
+       
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        {% block BodyBlock %}{% endblock %}
+
+        <!-- ============================================================== -->
+        
+        <!-- end main content-->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6"> 2022 - 
+                        <script>document.write(new Date().getFullYear())</script> © SWD - Software Department
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end d-none d-sm-block">
+                            This software based on Telecommunication Department
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- END layout-wrapper -->
+
+
+
+    <!--start back-to-top-->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+    <!--end back-to-top-->
+
+    <!--preloader-->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-lg" role="status">
+                <span class="visually-hidden">Telecommunication Department...</span>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% if perms.Users.change_users or perms.Users.change_client or perms.Users.change_agent %}
+    <!-- Modal Change Profile -->
+    <div class="modal flip profile_change" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <h5 style="font-weight:bold;" class="mb-2">Change User's Profile</h5>
+                    <p class="text-muted">To change user's profile uplaod the image and before you save it , you can preview it how it looks like.</p>
+                
+                    <div class="preview_image d-none rounded">
+                        <img src="" id="preview_image_src" alt="">
+                    </div>
+
+                    <div>
+                        <input class="form-control"  type="file" id="image_file">
+                    </div>
+
+                    <div class="hstack gap-2 mt-5 justify-content-center">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="save_image" class="btn btn-primary">Save Profile</a>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    {% endif %}
+
+     {% if perms.Users.change_password %}
+    <!-- Modal Password Changes -->
+    <div class="modal fade change_password" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <i class="bx bx-lock-alt text-primary" style="font-size:90px;"></i>
+                    <div class="row mt-4">
+                        <div class="col-md-12 text-center">
+                            <h4 class="mb-3">Change User's Password</h4>
+                        </div>
+                        <div class="col-md-12 mt-2 mb-3 d-flex justify-content-start align-items-start flex-column">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" placeholder="Enter Password" id="password">
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-start align-items-start flex-column">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" placeholder="Confirm Password" id="confirm_password">
+                        </div>
+
+                        <div class="col-md-12 mt-3 d-flex justify-content-start align-items-start flex-column">
+                            <button type="button" id="change_user_password" class="w-100 btn btn-primary waves-effect waves-light">Change Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    {% endif %}
+
+    <!-- JAVASCRIPT -->
+    
+    <script src={% static "assets/libs/bootstrap/js/bootstrap.bundle.min.js"%}></script>
+    <script src={% static "assets/libs/simplebar/simplebar.min.js"%}></script>
+    <script src={% static "assets/libs/node-waves/waves.min.js"%}></script>
+    <script src={% static "assets/libs/feather-icons/feather.min.js"%}></script>
+    <script src={% static "assets/js/pages/plugins/lord-icon-2.1.0.js"%}></script>
+    <script src={% static "assets/js/plugins.js"%}></script>
+	
+    <script src={% static "https://code.jquery.com/jquery-3.6.0.min.js"%} integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- apexcharts -->
+    <script src={% static "assets/libs/apexcharts/apexcharts.min.js"%}></script>
+
+    <!-- Vector map-->
+    <script src={% static "assets/libs/jsvectormap/js/jsvectormap.min.js"%}></script>
+    <script src={% static "assets/libs/jsvectormap/maps/world-merc.js"%}></script>
+
+    <!--Swiper slider js-->
+    <script src={% static "assets/libs/swiper/swiper-bundle.min.js"%}></script>
+
+    <!-- Dashboard init -->
+    <script src={% static "assets/js/pages/dashboard-ecommerce.init.js"%}></script>
+
+    
+
+    <!-- Sweet Alert css-->
+    <link href={% static "assets/libs/sweetalert2/sweetalert2.min.css"%} rel="stylesheet" type="text/css" />
+     
+     <!-- Sweet Alerts js -->
+    <script src={% static "assets/libs/sweetalert2/sweetalert2.min.js"%}></script>
+
+    <!-- Sweet alert init js-->
+    <script src={% static "assets/js/pages/sweetalerts.init.js"%}></script>
+    <script src={% static "assets/scripts/jquery/jquery.min.js" %}></script>
+
+
+     <!-- echarts js -->
+    <script src={% static "assets/libs/echarts/echarts.min.js" %}></script>
+
+  <!-- Data tables js-->
+  <script src={% static "assets/scripts/datatable/jquery.dataTables.min.js"%}></script>
+  <script src={% static "assets/scripts/datatable/dataTables.bootstrap4.min.js"%}></script>
+  {% comment %} <script src={% static "assets/scripts/datatable/datatable.js"%}></script> {% endcomment %}
+  {% comment %} <script src={% static "assets/scripts/datatable/datatable-2.js"%}></script> {% endcomment %}
+  <script src={% static "assets/scripts/datatable/dataTables.responsive.min.js"%}></script>
+  <!-- notifications init -->
+  <script src={% static "assets/js/pages/notifications.init.js" %}></script>
+  <script src={% static "scripts/admin/base.js"%}></script>
+
+  <!-- App js -->
+  <script src={% static "assets/js/app.js"%}></script>
+
+  
+
+    {% comment %} <!-- ckeditor -->
+    <script src= {% static "assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js" %}></script>
+    <!-- init js -->
+    <script src= {% static "assets/js/pages/form-editor.init.js" %}></script> {% endcomment %}
+
+    <!-- CDN Ckeditor -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.3.0/classic/ckeditor.js"></script>
+
+
+    <!-- dragula init js -->
+    <script src={% static  "assets/libs/dragula/dragula.min.js"%}></script>
+    <script src={% static "assets/libs/dom-autoscroller/dom-autoscroller.min.js"%}></script>
+
+    <script>
+        const BASE_URL = 'https://10.0.20.56/';
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        function showMessage(message) {
+        $('.alert-toast #clickToast').attr('data-toast-text', message)
+        $('.alert-toast #clickToast').trigger('click');
+    }
+        
+      </script>
+    {% block ScriptBlock %}{% endblock %}
+</body>
+
+</html>

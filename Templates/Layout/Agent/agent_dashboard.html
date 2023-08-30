@@ -1,0 +1,334 @@
+{% extends "../../Layout/index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>Dashboard</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Dashboard</h4>
+                        {% csrf_token %}
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Dashboard</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card card-height-100">
+                        <div class="card-body ">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm flex-shrink-0">
+                                    <span class="avatar-title bg-soft-info text-info rounded-2 fs-2">
+                                        <i class="bx bx-copy"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <p class="text-uppercase fw-medium text-muted mb-3">Number of Tickets</p>
+                                    <h4 class="fs-4 mb-3"><span class="counter-value"
+                                            data-target="{{TotalAssigned}}">0</span></h4>
+                                    <p class=" mb-0">Accepted Ticket <span class="badge  bg-success ">{{TotalAccept}}</span></p>
+                                </div>
+
+                            </div>
+                        </div><!-- end card body -->
+                    </div>
+                </div> <!-- end col-->
+              
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="fs-15 fw-semibold">Ticket Status</h5>
+                            <p class="text-muted">Summary</p>
+                            <div class="d-flex flex-wrap justify-content-evenly">
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-success fs-12" id="ticket-status">{{TotalInprogress}}</div>Inprogress
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-info fs-12" id="ticket-status">{{TotalIAssigned}}</div>Assigned
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-primary fs-12" id="ticket-status">{{TotalIClosed}}</div>Closed
+                                </p>
+                              
+                            </div>
+                        </div>
+                        <div class="progress animated-progress rounded-bottom rounded-0" style="height: 6px;">
+                            <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: 33%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: 33%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar rounded-0" role="progressbar" style="width: 33%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+
+                        <div class="card-body">
+
+                            <div class="row table-responsive">
+                                <div class="col-md-3 mb-3 pl-1 d-flex justify-content-start align-items-center">
+
+                                </div>
+
+                                <div class="col-md-9 mb-3">
+                                    <div class="row d-flex justify-content-end align-items-end">
+                                     
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <select id="FilterStatus" name="FilterStatus" FilterStatus={{ Status }}
+                                                    class="form-control select2 w-100">
+
+                                                    <option value="All">All</option>
+                                                    <option value="Assigned">Assigned</option>
+                                                    <option value="Inprogress">Inprogress</option>
+                                                    <option value="Closed">Closed</option>
+                                              
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <select id="DataNumber" name="DataNumber" DataNumber={{ DataNumber }}
+                                                    class="form-control select2 w-100">
+
+                                                    <option value="5">5</option>
+                                                    <option value="10">10</option>
+                                                    <option value="30">30</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 pr-1 d-flex justify-content-end align-items-center">
+                                            <div class="input-group mr-0">
+                                                <input id="SearchQuery" type="text" placeholder="Search..."
+                                                    value='{{SearchQuery}}' class="form-control"
+                                                    aria-label="Recipient's username" aria-describedby="button-addon2">
+                                                <button class="btn btn-primary" type="button" id="button-addon2">
+                                                    <i class="bx bx-search"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table id="tickets_table"
+                                        class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                        style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>ID.</th>
+                                                <th>Title</th>
+                                                <th>Category</th>
+                                                {% comment %} <th>Description</th> {% endcomment %}
+                                                <th>Client</th>
+                                                <th>Status</th>
+                                                <th>Priority</th>
+                                                <th>Created Date</th>
+                                                <th>Modified Date</th>
+                                                {% if perms.Tickets.change_tickets or perms.Tickets.delete_tickets %}
+                                                <th>Action</th>
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if page_obj %}
+                                            {% for ticket in page_obj %}
+                                            <tr>
+                                                <td>#{{ticket.ticketID.ticket_number}} </td>
+                                                <td class="RowID" id='{{ticket.ticketID.id}}'> <a
+                                                        href="#">{{ticket.ticketID.title}}</a></td>
+                                                <td>{{ticket.ticketID.category.name}}</td>
+                                                {% comment %} <td>{{ticket.description}}</td> {% endcomment %}
+                                                <td>{{ticket.ticketID.userID.first_name}}</td>
+                                                <td><span class="badge {% if ticket.ticketID.status == 'On-Hold' %} bg-primary {% elif ticket.ticketID.status == 'Assigned' %} bg-success {% elif ticket.ticketID.status == 'Inprogress' %} bg-secondary {% elif ticket.ticketID.status == 'Closed'%} bg-danger {% elif ticket.ticketID.status == 'Re-Open' %} bg-info {%else%} bg-orange{% endif %} text-uppercase">{{ticket.ticketID.status}}</span></td>
+                                                <td> <span class="badge {% if ticket.ticketID.priority == 'Critical' %} badge-soft-danger {% elif ticket.ticketID.priority == 'Low' %} badge-soft-success {% elif ticket.ticketID.priority == 'High' %} badge-soft-warning  {% else %} badge-soft-primary{% endif %} text-uppercase">{{ticket.ticketID.priority}}</span></td>
+                                                <td>{{ticket.ticketID.created_at}}</td>
+                                                <td>{{ticket.ticketID.getModifedDate}}</td>
+                                                {% if perms.Tickets.change_tickets or perms.Tickets.delete_tickets%}
+                                                <td>
+
+                                                    <div class="dropdown d-inline-block">
+                                                        <button class="btn btn-soft-secondary btn-sm dropdown"
+                                                            type="button" data-bs-toggle="dropdown"
+                                                            aria-expanded="false">
+                                                            <i class="ri-more-fill align-middle"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            {% if perms.Tickets.change_tickets %}
+                                                            <li>
+                                                                <a class="dropdown-item edit-item-btn edit-ticket"
+                                                                    ticketid='{{ticket.id}}'>
+                                                                    <i
+                                                                        class="ri-pencil-fill align-bottom me-2 text-muted"></i>
+                                                                    Edit
+                                                                </a>
+                                                            </li>
+                                                            {% endif %}
+                                                            {% if perms.Tickets.delete_tickets %}
+                                                            <li>
+                                                                <a class="dropdown-item remove-item-btn delete-ticket"
+                                                                    id='{{ticket.id}}'>
+                                                                    <i
+                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                    Delete
+                                                                </a>
+                                                            </li>
+                                                            {% endif %}
+                                                            {% if perms.Tickets.add_assignticket %}
+                                                            <li>
+
+                                                                <a class="dropdown-item remove-item-btn assign_ticket"
+                                                                    id='{{ticket.id}}'>
+                                                                    <i
+                                                                        class="ri-delete-bin-fill align-bottom me-2 text-muted"></i>
+                                                                    Assign To
+                                                                </a>
+                                                            </li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td class='text-center'
+                                                    colspan='{% if perms.Tickets.change_tickets or perms.Tickets.delete_tickets %}11{% else %}10{% endif %}'>
+                                                    No Tickets available</td>
+                                            </tr>
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 col-md-12 d-flex justify-content-between align-items-center">
+                                <div activePage={{ page_obj.number }} class="col-md-6 activePage">
+                                    Showing {{ page_obj.number }} to {{ page_obj.paginator.num_pages }} of {{ TotalTickets }}.
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end align-items-center">
+                                    <ul class="pagination listjs-pagination">
+                                        <a class="cursor-pointer page-item pagination-prev {% if not page_obj.has_previous %}disabled{% endif %}"
+                                            page="1">
+                                            <i class="bx bx-chevrons-left"></i>
+                                        </a>
+                                        <a class="cursor-pointer page-item pagination-prev {% if not page_obj.has_previous %}disabled{% endif %}"
+                                            page="{% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}No Page{% endif %}">
+                                            Previous
+                                        </a>
+
+                                        {% for page in Pages %}
+                                        <li class="{% if page_obj.number == page %}active{% endif %}">
+                                            <a class="page-item cursor-pointer page {% if page == '…' %}disabled{% endif %}"
+                                                page="{{page}}">{{page}}</a>
+                                        </li>
+                                        {% endfor %}
+
+                                        <a class="cursor-pointer page-item pagination-next {% if not page_obj.has_next %}disabled{% endif %}"
+                                            page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}No Page{% endif %}">
+                                            Next
+                                        </a>
+                                        <a class="cursor-pointer page-item pagination-next {% if not page_obj.has_next %}disabled{% endif %}"
+                                            page="{{ page_obj.paginator.num_pages}}">
+                                            <i class="bx bx-chevrons-right"></i>
+                                        </a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- container-fluid -->
+</div>
+<!-- End Page-content -->
+
+
+</div>
+
+{% endblock %}
+
+{% block ScriptBlock %}
+
+<script>
+    {% if page_obj %}
+    $("#tickets_table").DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+    });
+{% endif %}
+    $("#tickets_table").on("click", ".RowID", function () {
+        const ID = $(this).attr("id");
+        window.location.replace(BASE_URL + "tickets/view_tickets/" + ID);
+    });
+    // Update The Entries Selection
+    $("#DataNumber").val($("#DataNumber").attr("DataNumber"));
+
+    $("#DataNumber").change(function () {
+        RefreshPage();
+    });
+     // Update The Entries Status
+    $("#FilterStatus").val($("#FilterStatus").attr("FilterStatus"));
+
+    $("#FilterStatus").change(function () {
+        RefreshPage();
+    });
+
+    $("#SearchQuery").on("change", function () {
+        RefreshPage();
+    });
+
+    $("#SearchQueryBTN").on("click", function () {
+        RefreshPage();
+    });
+
+    $(".pagination .page-item").on("click", function () {
+        const pageNumber = $(this).attr("page");
+        $(".activePage").attr("activePage", pageNumber);
+        RefreshPage();
+    });
+
+    function RefreshPage() {
+        let page = $(".activePage").attr("activePage");
+        let search = $("#SearchQuery").val();
+        let entries = $("#DataNumber").val();
+        let FilterStatus = $("#FilterStatus").val();
+
+
+        window.location.replace(
+            BASE_URL +
+            `users/dashboard?DataNumber=${entries}&SearchQuery=${search}&page=${page}&FilterStatus=${FilterStatus}`
+        );
+    }
+
+
+  
+
+</script>
+{% endblock %}

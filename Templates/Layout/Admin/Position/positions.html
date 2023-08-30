@@ -1,0 +1,120 @@
+{% extends "../../../Layout/index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>Position</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Positions</h4>
+                        {% csrf_token %}
+                        
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Users</a></li>
+                                <li class="breadcrumb-item active">Positions</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <input type="hidden"  id='PositionPerms' edit='{{ perms.Users.change_position }}' delete='{{ perms.Users.delete_position }}'>
+            <!-- end page title -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        {% if perms.Users.add_position %}
+                        <div class="card-header">
+                            
+                            <button type="button" id="add_new_position"
+                                class="btn btn-primary waves-effect waves-light">
+                                Add Position
+                            </button>
+                        </div>
+                        
+                            {% endif %}
+                        <div class="card-body">
+                            <table id="position_table"
+                                class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                style="width:100%">
+                                <thead>
+                                    <tr>
+
+                                        <th>No.</th>
+                                        <th>Name</th>
+                                        <th>Created Date</th>
+                                        <th>Modified Date</th>
+                                        {% if perms.Users.change_position or perms.Users.delete_position %}
+                                        <th>Action</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+
+
+</div>
+
+<div class="modal fade" id="PositionModal" tabindex="-1" aria-labelledby="exampleModalgridLabel" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Add Position</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action"" id="PositionModalForm">
+                    <div class="row">
+                        <div class="col-xxl-12">
+                            <div>
+                                <label for="position" class="form-label">Position Name</label>
+                                <input type="text" class="form-control" id="Position_Name"
+                                    placeholder="Enter position name">
+                                <input type="text" hidden class="form-control" id="Position_ID"
+                                    placeholder="Enter position name">
+                            </div>
+                        </div>
+                        <!--end col-->
+
+
+                        <div class="col-lg-12 mt-3">
+                            <div class="hstack gap-2 justify-content-end">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                <button type="button" id="submit_position" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block ScriptBlock %}
+<script src={% static 'scripts/admin/positions.js' %}></script>
+{% endblock %}

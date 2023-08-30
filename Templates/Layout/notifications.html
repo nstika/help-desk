@@ -1,0 +1,76 @@
+{% extends "./index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>Notifications</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Notifications</h4>
+                        {% csrf_token %}
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Notifications</a></li>
+                                <li class="breadcrumb-item active">Notifications</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            
+            {% if messages %}
+            {% for item in messages %}
+                <div class="text-reset notification-item d-block dropdown-item position-relative">
+                <div class="d-flex">
+                    <div class="avatar-xs me-3">
+                        <span class="avatar-title bg-soft-info text-info rounded-circle fs-16">
+                            <i class="{{item.icon}}"></i>
+                        </span>
+                    </div>
+                    <div class="flex-1">
+                        <a href="#!" class="stretched-link">
+                            <h6 class="mt-0 mb-2 lh-base">{{item.message}}</h6>
+                        </a>
+                        <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                            <span><i class="mdi mdi-clock-outline"></i> {{item.get_created_date}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="my-3 text-center">
+                <button type="button" class="btn btn-soft-success waves-effect waves-light">View
+                    All Notifications <i class="ri-arrow-right-line align-middle"></i></button>
+            </div>
+            {% else %}
+            <div class="w-25 w-sm-50 pt-3 mx-auto">
+                <img src={% static "assets/images/svg/bell.svg" %} class="img-fluid" alt="user-pic">
+            </div>
+            <div class="text-center pb-5 mt-2">
+                <h6 class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </h6>
+            </div>
+            {% endif %}
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+
+
+</div>
+
+
+
+
+{% endblock %}

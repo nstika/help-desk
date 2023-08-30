@@ -1,0 +1,458 @@
+{% extends "../../Layout/index.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block PageTitle %}
+<title>Dashboard</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Dashboard</h4>
+                        {% csrf_token %}
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                                <li class="breadcrumb-item active">Admin Dashboard</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            
+             <div class="row">
+
+                   <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="fs-15 fw-semibold">Users Status</h5>
+                            <p class="text-muted">Summary</p>
+                            <div class="d-flex flex-wrap justify-content-evenly">
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-success fs-12" id="ticket-status">{{Users.Total.Admins.Value|intword}}</div>Admins
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-info fs-12" id="ticket-status">{{Users.Total.Agents.Value|intword}}</div>Agents
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-danger fs-12" id="ticket-status">{{Users.Total.Clients.Value|intword}}</div>Clients
+                                </p>
+                              
+                            </div>
+                        </div>
+                        <div class="progress animated-progress rounded-bottom rounded-0" style="height: 6px;">
+                            <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: {{Users.Total.Admins.Percentage}}%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: {{Users.Total.Agents.Percentage}}%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-danger rounded-0" role="progressbar" style="width: {{Users.Total.Clients.Percentage}}%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="fs-15 fw-semibold">Ticket Status</h5>
+                            <p class="text-muted">Summary</p>
+                            <div class="d-flex flex-wrap justify-content-evenly">
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-success fs-12" id="ticket-status">{{Tickets.Total.Active.Value|intword}}</div>Active
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-info fs-12" id="ticket-status">{{Tickets.Total.Inprogress.Value|intword}}</div>Inprogress
+                                </p>
+                                <p class="text-muted mb-0">
+                                    <div class="badge rounded-pill bg-danger fs-12" id="ticket-status">{{Tickets.Total.Closed.Value|intword}}</div>Closed
+                                </p>
+                              
+                            </div>
+                        </div>
+                        <div class="progress animated-progress rounded-bottom rounded-0" style="height: 6px;">
+                            <div class="progress-bar bg-success rounded-0" role="progressbar" style="width: {{Tickets.Total.Active.Percentage}}%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info rounded-0" role="progressbar" style="width: {{Tickets.Total.Inprogress.Percentage}}%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-danger rounded-0" role="progressbar" style="width: {{Tickets.Total.Closed.Percentage}}%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- All Tickets -->
+                <div class="col-md-4">
+                    <div class="card card-animate">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="fw-medium text-muted mb-0">All Tickets</p>
+                                    <h2 class="mt-4 ff-secondary fw-semibold"><span class="counter-value" data-target={{ Tickets.Total.All.Value }}>0</span>{{ Tickets.Total.All.Letter }}</h2>
+                                    <p></p>
+                                </div>
+                                <div>
+                                    <div class="avatar-sm flex-shrink-0">
+                                        <span class="avatar-title bg-soft-info rounded-circle fs-2">
+                                            <i class="ri-ticket-line text-info"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-xl-4 col-md-4">
+                    <div class="card card-height-100">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">Last Activities</h4>
+                            
+                        </div>
+
+                        <div class="card-body">
+                            {% if Trials %}
+                            <div data-simplebar>
+                                <div class="acitivity-timeline acitivity-main">
+                            {% for item in Trials %}
+                                    <!-- Item -->
+                                    <div class="acitivity-item mb-2 d-flex">
+                                        <div class="flex-shrink-0 avatar-xs acitivity-avatar">
+                                            <div class="avatar-title bg-soft-success text-success rounded-circle">
+                                                <img src="/media/{{item.Avatar}}" alt="" class="avatar-xxs rounded-circle acitivity-avatar">
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-1 lh-base">{{item.Name}}</h6>
+                                            <p class="text-muted mb-1">{{item.reduceActions}}</p>
+                                            <span class="badge badge-soft-info">{{item.date_of_action}}</span>
+                                        </div>
+                                    </div>
+                                     <!-- Item -->
+                            {% endfor %}
+                                    <div class="w-100 text-center">
+                                        <a href={% url 'AuditTrials' %}>See All Activites</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="w-100 text-center">
+                                <p>No audit trials available</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-4">
+                    <div class="card card-height-100">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">Active Tickets</h4>
+                            
+                        </div>
+
+                        <div class="card-body">
+                            {% if Tickets.Last5 %}
+                            <div class="table-responsive table-card">
+                                <table class="table align-middle table-borderless table-centered table-nowrap mb-0">
+                                    <thead class="text-muted table-light">
+                                        <tr>
+                                            <th scope="col">Ticket ID</th>
+                                            <th scope="col">Client</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Priority</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for ticket in Tickets.Last5 %}
+                                        <tr>
+                                            <td>#<a href={{ticket.get_absolute_url}}>{{ticket.ticket_number}}</a></td>
+                                            <td>{{ticket.userID.first_name}}</td>
+                                            <td><span class="badge {% if ticket.status == 'On-Hold' %} bg-primary {% elif ticket.status == 'Assigned' %} bg-success {% elif ticket.status == 'Inprogress' %} bg-secondary {% elif ticket.status == 'Closed'%} bg-danger {% elif ticket.status == 'Re-Open' %} bg-info {%else%} bg-orange{% endif %} text-uppercase">{{ticket.status}}</span></td>
+                                            <td><span class="badge {% if ticket.priority == 'Critical' %} badge-soft-danger {% elif ticket.priority == 'Low' %} badge-soft-success {% elif ticket.priority == 'High' %} badge-soft-warning  {% else %} badge-soft-primary{% endif %} text-uppercase">{{ticket.priority}}</span></td>
+                                            
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="w-100 text-center">
+                                <p>no tickets are active</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Chart -->
+                  <div class="col-xl-4 col-md-4">
+                    <div class="card">
+                        <div class="card-header align-items-center d-flex">
+                            <h4 class="card-title mb-0 flex-grow-1">Ticket Chart</h4>
+                            <div class="flex-shrink-0">
+                                <div class="d-flex justify-content-end align items center">
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example" , id=chart_ticket_years>
+                                    {% for year in Tickets.Years %}
+                                        <option {% if year.checked %}selected{% endif %} value={{year.value}}>{{year.value}}</option>
+                                    {% endfor %}
+                                    </select>
+                                <!-- <div style='width:10px; height:0px'></div>
+                                <select selectedMonth = {{Tickets.Month}} class="form-select form-select-sm" aria-label=".form-select-sm example" id='chart_ticket_months'>
+                                    <option value="0">All Months</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="chart-bar-label-rotation" data-colors='["#0275d8", "#5cb85c", "#d9534f"]' class="e-charts"></div>
+                        </div>
+                    </div>
+                    <!-- end card -->
+                </div>
+                <!-- Chart -->
+
+            </div>
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+   
+</div>
+{% endblock %}
+
+
+
+{% block  ScriptBlock %}
+<script>
+    $(document).ready(function () {
+    // let m = $('#chart_ticket_months').attr('selectedMonth')
+    // $('#chart_ticket_months').val(m)
+    // Parse Json Data
+    show(JSON.parse('{{ Tickets.ChartData|escapejs }}'))
+
+    function show(data) {
+        let total = [];
+        let active = [];
+        let inactive = [];
+
+        data.forEach((item, index) => {
+            total.push(item.Total);
+            active.push(item.Active);
+            inactive.push(item.Inactive);
+        });
+
+        showChart(total,active, inactive);
+
+
+    }
+    
+
+    function getChartColorsArray(elem) {
+        let item = document.getElementById(elem).getAttribute("data-colors")
+        item = JSON.parse(item);
+        return item;
+    }
+
+    function showChart(totalList , activeList, inactiveList) {
+        let chartBarLabelRotationColors = getChartColorsArray("chart-bar-label-rotation");
+        let chartDom = document.getElementById("chart-bar-label-rotation");
+        let myChart = echarts.init(chartDom);
+        var app = {};
+
+        app.configParameters = {
+            rotate: { min: -90, max: 90 },
+            align: {
+                options: { left: "left", center: "center", right: "right" }
+            },
+            verticalAlign: {
+                options: { top: "top", middle: "middle", bottom: "bottom" }
+            },
+            position: {
+                options: (
+                    posList = [
+                        "left",
+                        "right",
+                        "top",
+                        "bottom",
+                        "inside",
+                        "insideTop",
+                        "insideLeft",
+                        "insideRight",
+                        "insideBottom",
+                        "insideTopLeft",
+                        "insideTopRight",
+                        "insideBottomLeft",
+                        "insideBottomRight"
+                    ]).reduce(function (t, e) {
+                        return t[e] = e, t
+                    }, {})
+            }, distance: { min: 0, max: 100 }
+        }
+
+        app.config =
+        {
+            rotate: 90,
+            align: "left",
+            verticalAlign: "middle",
+            position: "insideBottom",
+            distance: 15,
+            onChange: function () {
+                var t = {
+                    rotate: app.config.rotate,
+                    align: app.config.align,
+                    verticalAlign: app.config.verticalAlign,
+                    position: app.config.position,
+                    distance: app.config.distance
+                };
+                myChart.setOption(
+                    {
+                        series: [
+                            { label: t },
+                            { label: t },
+                            { label: t },
+                        ]
+                    }
+                )
+            }
+        }
+
+        option = {
+            grid: {
+                left: "0%",
+                right: "0%",
+                bottom: "0%",
+                containLabel: !0
+            },
+            tooltip:
+            {
+                trigger: "axis",
+                axisPointer:
+                {
+                    type: "shadow"
+                }
+            },
+            legend: {
+                data: ["Total", "Active", "Closed"],
+                textStyle: { color: "#858d98" }
+            },
+            color: chartBarLabelRotationColors,
+            toolbox:
+            {
+                show: !0,
+                orient: "vertical",
+                left: "right",
+                top: "center",
+                feature: {
+                    mark: { show: !0 },
+                    dataView: {
+                        show: !0,
+                        readOnly: !(labelOption = {
+                            show: !0,
+                            position: app.config.position,
+                            distance: app.config.distance,
+                            align: app.config.align,
+                            verticalAlign: app.config.verticalAlign,
+                            rotate: app.config.rotate,
+                            formatter: "{c}  {name|{a}}",
+                            fontSize: 16,
+                            rich: {
+                                name: {}
+                            }
+                        })
+                    },
+                    magicType:
+                    {
+                        show: !0,
+                        type: ["line", "bar", "stack"]
+                    },
+                    restore: { show: !0 },
+                    saveAsImage: { show: !0 }
+                }
+            }, xAxis: [
+                {
+                    type: "category",
+                    axisTick: { show: !1 },
+                    data: ["Critical", "High", "Medium", "Low"],
+                    axisLine: { lineStyle: { color: "#000000" } }
+                }
+            ],
+            yAxis: {
+                type: "value",
+                axisLine: {
+                    lineStyle: { color: "#858d98" }
+                }, splitLine: {
+                    lineStyle: {
+                        color: "rgba(133, 141, 152, 0.1)"
+                    }
+                }
+            }, textStyle: {
+                fontFamily: "Poppins, sans-serif"
+            },
+            series: [
+                {
+                    name: "Total",
+                    type: "bar",
+                    barGap: 0,
+                    label: labelOption,
+                    emphasis: { focus: "series" },
+                    data: totalList
+                },
+                {
+                    name: "Active",
+                    type: "bar",
+                    label: labelOption,
+                    emphasis: { focus: "series" },
+                    data: activeList
+                },
+                {
+                    name: "Closed",
+                    type: "bar",
+                    label: labelOption,
+                    emphasis: { focus: "series" },
+                    data: inactiveList
+                },
+
+            ]
+        }
+
+        myChart.setOption(option)
+    }
+
+    $('#chart_ticket_years').on('change', function(){
+        RefreshPage()
+    })
+
+     $('#chart_ticket_months').on('change', function(){
+        RefreshPage()
+    })
+
+    function RefreshPage(){ 
+        let year = $('#chart_ticket_years').val();
+
+        window.location.replace(`dashboard?year=${year}`)
+    };
+});
+</script>
+{% endblock %}

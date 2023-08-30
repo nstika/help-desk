@@ -1,0 +1,146 @@
+{% extends "../../../Layout/index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>Add User</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Add {% if page == 'AgentsList' %}Agents{% else %}Users{% endif %}</h4>
+                        {% csrf_token %}
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Account</a></li>
+                                <li class="breadcrumb-item active">Add {% if page == 'AgentsList' %}Agents{% else %}Users{% endif %}</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+
+                            {% comment %} <button type="button" id="add_new_position"
+                                class="btn btn-danger waves-effect waves-light">
+                                Go Back
+                            </button> {% endcomment %}
+                            <a href={% url page %} class="btn btn-danger">Go Back</a>
+                        </div>
+                        <div class="card-body">
+                            <form action="javascript:void(0);">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="firstNameinput" class="form-label">First Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter first name" id="FName">
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="lastNameinput" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter last name" id="LName">
+                                        </div>
+                                    </div><!--end col-->
+                                    
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="phonenumberInput" class="form-label">Phone Number</label>
+                                            <input type="number" maxlength="3" class="form-control" placeholder="123" id="Phone">
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email Address</label>
+                                            <input type="email" class="form-control" placeholder="example@gmail.com" id="Email">
+                                        </div>
+                                    </div><!--end col-->
+                                   
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="UserType" class="form-label">User Type</label>
+                                            <select id="UserType" class="form-select">
+                                             
+                                                <option selected value="">Select User Type</option>
+                                                <option value="Agent">Agent</option>
+                                                <option value="Admin">Admin</option>
+                                                <option value="Super">Super Admin</option>
+                                              
+                                            </select>
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="Position" class="form-label">Position</label>
+                                            <select id="Position" class="form-select">
+                                             
+                                                <option value="" selected>Select Position</option>
+                                            </select>
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="Department" class="form-label">Department</label>
+                                            <select id="Department" class="form-select">
+                                                <option selected value="">Select Department</option>
+                                            </select>
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="Gender" class="form-label">Gender</label>
+                                            <select id="Gender" class="form-select">
+                                                <option selected value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                              
+                                            </select>
+                                        </div>
+                                    </div><!--end col-->
+                             
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <div>
+                                                <label for="formFile" class="form-label">Upload Image</label>
+                                                <input class="form-control" type="file" id="Image">
+                                            </div>
+                                               
+                                        </div>
+                                    </div><!--end col-->
+                                    <div class="col-lg-12">
+                                        <div class="text-end">
+                                            <button type="submit"  id="Save"class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div><!--end col-->
+                                </div><!--end row-->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+
+
+</div>
+
+{% endblock %}
+
+{% block ScriptBlock %}
+<script src={% static 'scripts/admin/users/add_users.js' %}></script>
+{% endblock %}

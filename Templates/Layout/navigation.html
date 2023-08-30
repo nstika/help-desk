@@ -1,0 +1,286 @@
+{% load static %}
+<div class="app-menu navbar-menu">
+    <!-- LOGO -->
+    <div class="navbar-brand-box">
+        <!-- Dark Logo-->
+        <a href={% url 'Dashboard' %} class="logo logo-dark">
+            <span class="logo-sm">
+           
+                <img src={% static "assets/logo/task_logo.png" %} alt="" height="50">
+            </span>
+            <span class="logo-lg">
+                <img src={% static "assets/logo/task_logo.png" %} alt="" height="70">
+            </span>
+        </a>
+        <!-- Light Logo-->
+        <a href={% url 'Dashboard' %} class="logo logo-light">
+            <span class="logo-sm">
+                <img src={% static "assets/logo/task_logo.png" %} alt="" height="50">
+            </span>
+            <span class="logo-lg">
+                <img src={% static "assets/logo/task_logo.png" %} alt="" height="70">
+            </span>
+        </a>
+        <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
+            id="vertical-hover">
+            <i class="ri-record-circle-line"></i>
+        </button>
+    </div>
+
+    <div id="scrollbar">
+        <div class="container-fluid">
+
+            <div id="two-column-menu">
+            </div>
+            <ul class="navbar-nav" id="navbar-nav">
+                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+
+              
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href={% url 'Dashboard' %} >
+                        <i class="ri-dashboard-fill"></i> <span data-key="t-widgets">Dashboard</span>
+                    </a>
+                </li>
+
+                {% if not request.user.is_client %}
+                
+                <!--  Manage Users -->
+                {% if perms.Users.view_position or perms.Users.view_department or perms.Users.view_agent or  perms.Users.view_users or perms.Users.view_client %}
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#manageUsers" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="manageUsers">
+                        <i class="ri-account-box-fill"></i> <span data-key="t-dashboards">Account</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="manageUsers">
+                        <ul class="nav nav-sm flex-column">
+                            {% if perms.Users.view_client %}
+                            <li class="nav-item">
+                                <a href={% url 'ClientList' %} class="nav-link" data-key="t-ecommerce">Client
+                                    Lists</a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Users.view_users %}
+                            <li class="nav-item">
+                                <a href={% url 'UsersList' %} class="nav-link" data-key="t-analytics"> User Lists
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Users.view_agent %}
+                            <li class="nav-item">
+                                <a href={% url 'AgentsList' %} class="nav-link" data-key="t-ecommerce"> Agent Lists </a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Users.view_department %}
+                            <li class="nav-item">
+                                <a href={% url 'Department' %} class="nav-link" data-key="t-ecommerce"> Department </a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Users.view_position %}
+                            <li class="nav-item">
+                                <a href={% url 'Positions' %} class="nav-link" data-key="t-ecommerce"> Position </a>
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                    </div>
+
+                </li> <!-- end Dashboard Menu -->
+                {% endif %}
+
+
+                {% if perms.Tickets.view_category %}
+                <!--  Manage Tickets -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#manageCategories" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="manageCategories">
+                        <i class="ri-loader-3-line"></i> <span data-key="t-dashboards">Categories</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="manageCategories">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href={% url 'ProjectCategory' %} class="nav-link" data-key="t-ecommerce">Project Category </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'TicketCategory' %} class="nav-link" data-key="t-ecommerce">Ticket Category </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'TaskCategory' %} class="nav-link" data-key="t-ecommerce"> Task Category </a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+
+                </li>
+                {% endif %}
+
+                {% if request.user.is_admin or request.user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href={% url 'ManagerProjects' %} >
+                        <i class="ri-dashboard-fill"></i> <span data-key="t-widgets">My Projects</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if perms.Projects.view_project or  perms.Projects.view_task %}
+                <!--  Manage Tickets -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#manageProject" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="manageProject">
+                        <i class="ri-projector-fill"></i> <span data-key="t-dashboards">Projects</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="manageProject">
+                        <ul class="nav nav-sm flex-column">
+                            {% if perms.Projects.view_project %}
+                            <li class="nav-item">
+                                <a href={% url 'projects' %} class="nav-link" data-key="t-ecommerce"> Manage Projects </a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Projects.view_task %}
+                            <li class="nav-item">
+                                <a href={% url 'tasks' %} class="nav-link" data-key="t-ecommerce"> Tasks List </a>
+                            </li>
+                            {% endif %}
+                            
+                        </ul>
+                    </div>
+
+                </li>
+                {% endif %}
+
+                
+                
+
+                {% if perms.Users.role_report or perms.auth.view_permission and perms.auth.add_permission or perms.auth.view_group or perms.Users.assign_user_to_group %}
+                <li class="nav-item">
+                <a class="nav-link menu-link" href="#Roles" data-bs-toggle="collapse" role="button"
+                    aria-expanded="false" aria-controls="sidebarDashboards">
+                    <i class="ri-shield-keyhole-fill"></i> <span data-key="t-dashboards">Manage Roles</span>
+                </a>
+                <div class="collapse menu-dropdown" id="Roles">
+                    <ul class="nav nav-sm flex-column">
+                         {% if  perms.auth.view_permission and perms.auth.add_permission or perms.Users.manage_role_groups %}
+                        <li class="nav-item">
+                            <a href={% url 'SearchRole' %} class="nav-link" data-key="t-ecommerce">Search Role</a>
+                        </li>
+                        {% endif %}
+                        {% if  perms.auth.view_permission and perms.auth.add_permission %}
+                        <li class="nav-item">
+                            <a href={% url 'SingleRoles' %} class="nav-link" data-key="t-ecommerce">Assign Role</a>
+                        </li>
+                        {% endif %}
+                        {% if perms.auth.view_group %}
+                        <li class="nav-item">
+                            <a href={% url 'ManageGroup' %} class="nav-link" data-key="t-ecommerce">Create Groups</a>
+                        </li>
+                        {% endif %}
+                        {% if perms.Users.assign_user_to_group %}
+                        <li class="nav-item">
+                            <a href={% url 'GroupRoles' %} class="nav-link" data-key="t-ecommerce">Assign To Group</a>
+                        </li>
+                        {% endif %}
+                        {% if perms.Users.role_report %}
+                        <li class="nav-item">
+                            <a href={% url 'RolesReport' %} class="nav-link" data-key="t-ecommerce">Role Reports</a>
+                        </li>
+                        {% endif %}
+                        {% if perms.Users.role_report %}
+                        <li class="nav-item">
+                            <a href={% url 'UserRolesReport' %} class="nav-link" data-key="t-ecommerce">User Roles Report</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                </li>
+                {% endif %}
+
+                {% if perms.Users.view_audittrials or perms.Users.view_errorlogs %}
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#Logs" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarDashboards">
+                        <i class="ri-bar-chart-line"></i> <span data-key="t-dashboards">System Logs</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="Logs">
+                        <ul class="nav nav-sm flex-column">
+                            {% if perms.Users.view_audittrials%}
+                            <li class="nav-item">
+                                <a href={% url 'AuditTrials' %} class="nav-link" data-key="t-ecommerce"> Audit Trials
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% if perms.Users.view_errorlogs %}
+                            <li class="nav-item">
+                                <a href={% url 'ErrorLogs' %} class="nav-link" data-key="t-ecommerce"> Error Logs </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </li>
+                {% endif %}
+
+                {% if perms.Users.is_superuser%}
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#recycle" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="sidebarDashboards">
+                        <i class="ri-recycle-fill"></i> <span data-key="t-dashboards">Recycle Bin</span>
+                       
+                    </a>
+                    <div class="collapse menu-dropdown" id="recycle">
+                        <ul class="nav nav-sm flex-column">
+                           
+                            <li class="nav-item">
+                                <a href={% url 'RecycleDepartment' %} class="nav-link" data-key="t-ecommerce"> Department 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'RecyclePosition' %} class="nav-link" data-key="t-ecommerce"> Position 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'RecycleCategory' %} class="nav-link" data-key="t-ecommerce"> Category 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'RecycleTickets' %} class="nav-link" data-key="t-ecommerce"> Tickets 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href={% url 'RecycleUsers' %} class="nav-link" data-key="t-ecommerce"> Users 
+                                </a>
+                            </li>
+                            
+                       
+                        </ul>
+                    </div>
+                </li>
+
+
+                {% endif %}
+
+                {% endif %}
+
+                {% if request.user.is_agent %}
+                <!--  Manage Tickets -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#manageCategories" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="manageCategories">
+                        <i class="ri-ticket-fill"></i> <span data-key="t-dashboards">Tasks</span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="manageCategories">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href={% url 'AgentTasks' %} class="nav-link" data-key="t-ecommerce">Tasks</a>
+                            </li>
+                           
+                            
+                        </ul>
+                    </div>
+
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+
+    <div class="sidebar-background"></div>
+</div>

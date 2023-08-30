@@ -1,0 +1,126 @@
+{% extends "../../../Layout/index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>Ticket Reports</title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Ticket Reports</h4>
+                        {% csrf_token %}
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Tickets</a></li>
+                                <li class="breadcrumb-item active">Tickets</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <a href={% url 'AgentsList' %} class="mb-2 btn btn-danger">Go Back</a>
+                            <h5 class="card-title mb-3">Agent Info</h5>
+                            <div class="row">
+                                <div class="col-md-6 d-flex align-items-center justify-content-start">
+                                    <p><span style='font-weight:bold; padding-right:5px;' >Full Name  :</span>{{ User.first_name }} {{ User.last_name }}</p>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-center justify-content-start">
+                                    <p><span style='font-weight:bold; padding-right:5px;' >User ID  :</span>{{ User.username }}</p>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-center justify-content-start">
+                                    <p><span style='font-weight:bold; padding-right:5px;' >Phone  :</span>{{ User.phone }}</p>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center justify-content-start">
+                                    <p><span style='font-weight:bold; padding-right:5px;' >Position  :</span>{{ User.position.position_name }}</p>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-center justify-content-start">
+                                    <p><span style='font-weight:bold; padding-right:5px;' >Department  :</span>{{ User.department.dept_name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            
+                            <div class="table-responsive">
+                            <form autocomplete='off'>
+                                <table id="ticket_table" class="table table-bordered dt-responsive nowrap table-striped align-middle" style="width:100%">
+                                    <thead>
+                                        <tr>
+                
+                                            <th>No.</th>
+                                            <th>Ticket Name</th>
+                                            <th>Ticket Number</th>
+                                            <th>Priority</th>
+                                            <th>Accept</th>
+                                                      
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+                                        {% if Others or Accepted_Removed %}
+                                        {% for item in Others %}
+                                        <tr>
+                                            <td>{{forloop.counter}}.</td>
+                                            <td>{{item.ticketID.title}}</td>
+                                            <td>{{item.ticketID.ticket_number}}</td>
+                                            <td><span class="badge {% if item.ticketID.priority == 'Critical' %} badge-soft-danger {% elif item.ticketID.priority == 'Low' %} badge-soft-success {% elif item.ticketID.priority == 'High' %} badge-soft-warning  {% else %} badge-soft-primary{% endif %} text-uppercase">{{item.ticketID.priority}}</span></td>
+                                            <td><span class='badge badge-soft-{% if item.getStatus == 'Accepted' %}success{% else %}danger {%endif %}'>{{item.getStatus}}</span></td>
+                                        </tr>
+                                        {% endfor %}
+                                        
+                                        {% if Accepted_Removed %}
+                                        <tr class="bg-light text-black"><td colspan="5" class='text-center'>Removed Tickets</td></tr>
+                                        {% endif %}
+
+                                        {% for item in Accepted_Removed %}
+                                        <tr>
+                                            <td>{{forloop.counter}}.</td>
+                                            <td>{{item.ticketID.title}}</td>
+                                            <td>{{item.ticketID.ticket_number}}</td>
+                                            <td><span class="badge {% if item.ticketID.priority == 'Critical' %} badge-soft-danger {% elif item.ticketID.priority == 'Low' %} badge-soft-success {% elif item.ticketID.priority == 'High' %} badge-soft-warning  {% else %} badge-soft-primary{% endif %} text-uppercase">{{item.ticketID.priority}}</span></td>
+                                            <td><span class='badge badge-soft-{% if item.getStatus == 'Accepted' %}success{% else %}danger {%endif %}'>{{item.getStatus}}</span></td>
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                        <tr><td class='text-center' colspan="5">No data available</td></tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+   
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+
+
+</div>
+
+{% endblock %}
+
+{% block ScriptBlock %}
+
+
+<script src={% static 'scripts/admin/tickets/ticket_report.js' %}></script>
+
+
+{% endblock %}

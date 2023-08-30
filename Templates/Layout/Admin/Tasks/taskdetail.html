@@ -1,0 +1,831 @@
+{% extends "../../../Layout/index.html" %}
+{% load static %}
+{% block PageTitle %}
+<title>View Task </title>
+{% endblock %}
+
+{% block BodyBlock %}
+<div class="main-content">
+    {% csrf_token %}
+    <div class="page-content">
+        <div class="container-fluid">
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0">Task Details</h4>
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">Tasks</a></li>
+                                <li class="breadcrumb-item active">Task Details</li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+            {% if isError == False%}
+
+            <div class="row">
+                <div class="col-xxl-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            
+                            <div class="row">
+                                <div class="col-md">
+                                    <h6 class="card-title mb-3 flex-grow-1 text-start">Time Remaining</h6>
+                                </div>
+                                <div class="col-md-auto">
+                                    <div class="hstack gap-1 flex-wrap">
+                                        <a href={% url 'tasks' %} data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="left" title="Go Back">
+                                            <i class="ri-arrow-go-back-fill"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <lord-icon src="https://cdn.lordicon.com/kbtmbyzy.json" trigger="loop"
+                                    colors="primary:#405189,secondary:#02a8b5" style="width:70px;height:70px">
+                                </lord-icon>
+                            </div>
+                            <h3 class="mb-1">{{task.calculate_remaining_days}}</h3>
+
+                            {% if request.user.is_agent and  is_assigned == False %}
+                                {% if task.projectID.is_active and task.is_active %}
+                                <div class="flex-shrink-0">
+                                    <button type="button" class="btn btn-soft-success btn-sm" id="Accepts">
+                                        <i class="ri-share-line me-1 align-bottom"></i> 
+                                        Accept Task
+                                    </button>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!--end card-->
+                    <div class="card mb-2">
+                        <div class="card-body">
+
+                            <div class="table-card">
+                                <table class="table mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                    <div class="card-body">
+                                                        <div class="d-flex">
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="mb-0"><b class="text-danger">{{TotalProgress}}%</b> {% if TotalProgress < 100 %} Update in
+                                                                    progress... {%else%} Completed Progress {% endif%}</h6>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <h6 class="mb-0">{{RemainingProgress}}% left</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="progress bg-soft-danger rounded-0">
+                                                        <div class="progress-bar {% if TotalProgress > 50 %} bg-success {% else%} bg-danger {% endif%}" role="progressbar"
+                                                            style="width: {{TotalProgress}}%" aria-valuenow="{{TotalProgress}}" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                               
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Tasks No</td>
+                                            <td>{{task.task_number}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Tasks Title</td>
+                                            <td>{{task.title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Project Name</td>
+                                            <td>{{task.projectID.title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Priority</td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+
+                                                    <div class="flex-grow-1 ms-2">
+                                                        <span
+                                                            class="badge {% if task.priority == 'Critical' %} badge-soft-danger {% elif task.priority == 'Low' %} badge-soft-success {% elif task.priority == 'High' %} badge-soft-warning  {% else %} badge-soft-primary{% endif %} text-uppercase"
+                                                            id="t-priority">{{task.priority}}</span>
+                                                    </div>
+                                                    <div class="hstack gap-3 fs-16">
+                                                        {% if perms.Projects.change_priority_task  %}
+                                                            {% if task.projectID.is_active and task.is_active %}
+                                                            <a href="#" class="btnpriority"><i
+                                                                    class=" ri-pencil-fill"></i></a>
+                                                            {% endif%}
+                                                        {% endif%}
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Status</td>
+                                            <td>
+
+                                                <div class="d-flex align-items-center">
+
+                                                    <div class="flex-grow-1 ms-2">
+
+                                                        <span
+                                                            class="badge {% if task.status == 'On-Hold' %} bg-danger {% elif task.status == 'Assigned' %} bg-primary {% elif task.status == 'Inprogress' %} bg-secondary {% elif task.status == 'Completed'%} bg-success  {%else%} bg-orange{% endif %} text-uppercase"
+                                                            id="t-status">{{task.status}}</span>
+                                                    </div>
+                                                   
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Start Date</td>
+                                            <td>{{task.start}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">End Date</td>
+                                            <td>{{task.end}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-medium">Time Remining</td>
+                                            <td>{{task.calculate_remaining_days}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!--end table-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--end card-->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex mb-3">
+                                <h6 class="card-title mb-0 flex-grow-1">Assigned To</h6>
+
+                                {% if perms.Projects.add_assigntask %}
+                                {% if task.projectID.is_active and task.is_active %}
+                                <div class="flex-shrink-0">
+                                    <button type="button" class="btn btn-soft-danger btn-sm AsignAgent"
+                                        data-bs-toggle="modal" data-bs-target="#AssignTaskModal"><i
+                                            class="ri-user-line me-1 align-bottom"></i> Assign Agent</button>
+                                </div>
+                                {%endif%}
+                                {%endif%}
+
+                            </div>
+                            <ul class="list-unstyled vstack gap-3 mb-0">
+                                {% if assigned %}
+                                {% for assigneds in assigned %}
+                                <li>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <img src="/media/{{assigneds.userID.avatar}} "
+                                                alt="{{assigneds.userID.first_name}}" class="avatar-xs rounded-circle">
+                                        </div>
+                                        <div class="flex-grow-1 ms-2">
+                                            <h6 class="mb-1">{{assigneds.userID.first_name}}
+                                                {{assigneds.userID.last_name}}
+                                                 {% if assigneds.is_accepted %}
+                                                <button type="button"class="btn btn-success btn-sm  ri-check-double-fill"></i>
+                                                </button>{% endif%} 
+                                            </h6>
+                                            <p class="text-muted mb-0">{{assigneds.userID.position.position_name}}</p>
+                                        </div>
+                                        {% if perms.Projects.delete_assigntask %}
+                                        {% if task.projectID.is_active and task.is_active %}
+                                        <a href="javascript:void(0);" class=" Row"><i class="ri-delete-bin-line Delete"
+                                                id='{{assigneds.id}}'></i></a>
+                                        {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </li>
+                                {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!--end card-->
+
+                </div>
+                <!---end col-->
+                <div class="col-xxl-9">
+
+                    <!--end card-->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <ul class="nav nav-tabs-custom rounded card-header-tabs border-bottom-0" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#OverView" role="tab">
+                                            OverView
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#progress" role="tab">
+                                            Progress
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#Attachments" role="tab">
+                                            Attachments File ({{Files|length}})
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#Notes" role="tab">
+                                            Notes
+                                        </a>
+                                    </li>
+                                </ul>
+                                <!--end nav-->
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="OverView" role="tabpanel">
+                                    <p> {{ task.description|safe|linebreaks }}</p>
+
+                                    {% if is_accepted  and perms.Projects.view_taskcomments%}
+                                    <div class="pt-3 border-top border-top-dashed mt-4">
+                                        <h5 class="card-title mb-4">Comments</h5>
+                                        <div data-simplebar style="height: 308px;" class="px-3 mx-n3 mb-2">
+                                            {% if replies %}
+                                            <div data-simplebar style="height: 300px;" class="px-3 mx-n3">
+                                            {% for reply in replies %}
+                                                <div class="d-flex mb-4">
+                                                    <div class="flex-shrink-0">
+                                                        <img src="/media/{{reply.userID.avatar }}" alt="" class="avatar-xs rounded-circle" />
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <h5 class="fs-13">{{reply.userID.first_name }} {{reply.userID.last_name }} <span class="badge {% if reply.userID.getUserType == 'Agent' %} badge-soft-success {% elif reply.userID.getUserType == 'Admin' %} badge-soft-danger {% elif reply.userID.getUserType == 'Client' %} badge-soft-warning {%else%} badge-soft-info {% endif %} text-uppercase">{{reply.userID.getUserType}}</span> <small class="text-muted">{{reply.get_created_date }}</small></h5>
+                                                        <p class="text-muted">{{reply.message|linebreaks }}</p>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                            </div>
+                                            {% else %}
+                                                <p class="text-muted">No comments has been made .</p>
+                                            {% endif %}
+                                        </div>
+                                        {% if is_accepted and perms.Projects.add_taskcomments %}
+                                            {% if task.projectID.is_active and task.is_active %}
+                                            <form class="mt-4">
+                                                <div class="row g-3">
+                                                    <div class="col-lg-12">
+                                                        <label for="comment_message" class="form-label">Leave a Comments</label>
+                                                        <textarea class="form-control bg-light border-light" id="comment_message" rows="3" placeholder="Enter comments"></textarea>
+                                                    </div>
+                                                    <!--end col-->
+                                                    <div class="col-12 text-end">
+                                                        <button type="button" taskID = {{task.id}} userID = {{request.user.id}}  id="postComment" class="btn btn-success">Post Comments</a>
+                                                    </div>
+                                                </div>
+                                                <!--end row-->
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                                <div class="tab-pane" id="progress" role="tabpanel">
+                                   
+
+
+                                   
+
+                                        <div class="d-flex mb-3 mt-3">
+                                            <h6 class="card-title mb-0 flex-grow-1">Task Progress </h6>
+
+
+                                            {% if  is_accepted and request.user.is_agent and perms.Projects.add_taskprogess  %}
+                                                {% if task.projectID.is_active and task.is_active %}
+                                            
+                                                    <div class="flex-shrink-0">
+                                                        <button type="button" class="btn btn-soft-info btn-sm" data-bs-toggle="modal" data-bs-target="#TaskProgressModal">
+                                                            <i class="ri-user-line me-1 align-bottom"></i>
+                                                            Add Progress
+                                                        </button>
+                                                    </div>
+                                                {%endif%}
+                                            {%endif%}
+
+                                        </div>
+
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                       
+
+                                                  
+                                                        <h6 class="mb-0"><b class="text-danger">{{TotalProgress}}%</b> {% if TotalProgress < 100 %} Update in
+                                                            progress... {%else%} Completed Progress {% endif%}</h6>
+                                                    </div>
+                                                    <div class="flex-shrink-0">
+                                                        <h6 class="mb-0">{{RemainingProgress}}% left</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="progress bg-soft-danger rounded-0">
+                                                <div class="progress-bar {% if TotalProgress > 50 %} bg-success {% else%} bg-danger {% endif%}" role="progressbar"
+                                                    style="width: {{TotalProgress}}%" aria-valuenow="{{TotalProgress}}" aria-valuemin="0"
+                                                    aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        {% if Progress %}
+                                        {% for current in Progress %}
+
+                                       
+                                        <div class="d-flex mt-2 editprogress">
+                                            <div class="flex-grow-1">
+                                                <p> {{ current.description|safe|linebreaks }}</p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <h6 class="mb-0">{{current.work_completion}}%</h6>
+                                                {% if is_accepted and  perms.Projects.change_taskprogess  %}
+                                                {% if task.projectID.is_active and task.is_active %}
+                                                
+                                                <a href="#" class="btnnote" progressid={{current.id}}><i
+                                                    class=" ri-pencil-fill"></i></a>
+                                                {%endif%}
+                                            {%endif%}
+                                            </div>
+                                        </div>
+                                        {%endfor%}
+                                        {%endif%}
+                                    
+
+
+
+                                </div>
+                                <!--end tab-pane-->
+                                <div class="tab-pane" id="Attachments" role="tabpanel">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="row w-100">
+                                          <div class="col-md-6">
+                                            <h5>Attachments</h5>
+                                          </div>
+                                          <div class="col-md-6 d-flex justify-content-end align-items-center">
+                                              {% if is_accepted and perms.Projects.add_taskfile and task.projectID.is_active  and task.is_active %}
+                                                  <button type="button" id="upload_btn_shower" class="btn btn-success btn-icon waves-effect waves-light"><i class="ri-upload-cloud-line"></i></button>
+                                              {% endif %}
+                                              
+                                                
+                                              </div>
+                                        </div>                                      
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="table-responsive table-card">
+                                                <table id="task_files" class="table table-borderless align-middle mb-0">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th scope="col">File Name</th>
+                                                            <th scope="col">Type</th>
+                                                            <th scope="col">Size</th>
+                                                            <th scope="col">Upload Date</th>
+                                                            <th scope="col" style="width: 120px;">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                      {% if Files %}
+                                                      {% for file in Files %}
+                                                      <tr>
+                                                          <td>
+                                                              <div class="d-flex align-items-center">
+                                                                  <div class="avatar-sm">
+                                                                      <div class="avatar-title bg-light text-{{file.getImageDetails.color}} rounded fs-24">
+                                                                          <i class="{{file.getImageDetails.icon}}"></i>
+                                                                      </div>
+                                                                  </div>
+                                                                  <div class="ms-3 flex-grow-1">
+                                                                      <h5 class="fs-14 mb-0"><a target="_blank" href="/media/{{file.file}}">{{file.title}}</a></h5>
+                                                                  </div>
+                                                              </div>
+                                                          </td>
+                                                          <td>{{file.getImageDetails.extension}} file</td></td>
+                                                          <td>{{file.getImageDetails.size}}</td>
+                                                          <td>{{file.created_at}}</td>
+                                                          <td>
+                                                            
+
+                                                            
+                                                              <ul class="list-inline hstack gap-2 mb-0">
+                                                                  <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Download">
+                                                                      <a download href="/media/{{file.file}}" class="remove-item-btn" >
+                                                                          <i class="ri-download-2-fill align-bottom text-muted"></i>
+                                                                      </a>
+                                                                  </li>
+                                                                  {% if is_accepted and perms.Projects.change_taskfile and task.projectID.is_active and task.is_active%}
+                                                                  <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                                                                      <a class="remove-item-btn" id="edit_file" row_id={{file.id}}>
+                                                                          <i class="ri-pencil-fill align-bottom text-muted"></i>
+                                                                      </a>
+                                                                  </li>
+                                                                  {% endif %}
+                                                                  {% if is_accepted and perms.Projects.delete_taskfile and task.projectID.is_active and task.is_active %}
+                                                                  <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Delete">
+                                                                      <a class="remove-item-btn" id="delete_file" row_id={{file.id}}>
+                                                                          <i class="ri-delete-bin-4-fill align-bottom text-muted"></i>
+                                                                      </a>
+                                                                  </li>
+                                                                  {% endif %}
+                                                                  
+                                                              </ul>
+                                                          </td>
+                                                      </tr>
+                                                      {% endfor %}
+                                                      {% else %}
+                                                      <tr>
+                                                        <td class="text-center" colspan="5">No files available</td>
+                                                      </tr>
+                                                      {% endif %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end tab-pane-->
+                                <div class="tab-pane" id="Notes" role="tabpanel">
+                                  
+                                    <div class="table-responsive table-card">
+                                        <div class="card">
+                                            <div class="card-header align-items-center d-flex">
+                                                <h4 class="card-title mb-0 flex-grow-1">Notes List</h4>
+                                                {% if request.user.is_agent and is_accepted and perms.Projects.add_tasknote and task.projectID.is_active and task.is_active%}
+                                                
+
+                                                <div class="flex-shrink-0">
+                                                    <button class="btn btn-primary" id="add_note_btn"><i class="bx bx-plus"></i> Add Note</button>
+                                                </div>
+                                               {% endif %}
+                                                
+                                            </div>
+                                            <!-- end card header -->
+                                            <div class="card-body">
+                                                {% if Notes %}
+                                                <div class="live-preview">
+                                                    <div class="accordion accordion-flush" id="note_tabs_container">
+                                                        {% for note in Notes %}
+                                                        <div class="accordion-item">
+                                                            <h2 class="accordion-header" id="flush-headingOne">
+                                                                
+                                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne-{{note.noteID}}" aria-expanded="true" aria-controls="flush-collapseOne-{{note.noteID}}">
+                                                                    #{{note.noteID}}
+                                                                </button>
+                                                            </h2>
+                                                            <div id="flush-collapseOne-{{note.noteID}}" class="accordion-collapse collapse {% if forloop.counter == 1 %}show{% endif %}" aria-labelledby="flush-headingOne" data-bs-parent="#note_tabs_container" >
+                                                                <div class="accordion-body">
+                                                                    <div class="row mb-2 g-4 align-items-center">
+                                                                        <div class="col-sm-3">
+                                                                            <h6><span class="text-muted fw-normal">Created Date :  </span>{{note.created_at}}</span></h6>
+                                                                            <h6><span class="text-muted fw-normal">Last Modified Date : </span>{{note.modified_at}}</span></h6>
+                                                                        </div>
+                                                                        <div class="col-sm-auto ms-auto">
+                                                                            <div class="hstack gap-2">
+                                                                                {% if  request.user.is_agent and is_accepted and perms.Projects.change_tasknote and task.projectID.is_active and task.is_active %}
+                                                                                <button type="button" id="edit_note" row_id = {{note.id}} class="btn btn-success btn-icon waves-effect waves-light"><i class="bx bx-pencil"></i></button>
+                                                                                {% endif %}
+                                                                                {% if request.user.is_agent and is_accepted and perms.Projects.delete_tasknote and task.projectID.is_active and task.is_active %}
+                                                                                <button type="button" id="delete_note" row_id = {{note.id}} class="btn btn-danger btn-icon waves-effect waves-light"><i class="bx bx-trash-alt"></i></button>
+                                                                                {% endif %}
+                                                                                
+                                                                               
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    {{note.note|linebreaks}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                                {% else %}
+                                                <p class="text-center">No notes available.</p>
+                                                {% endif %}
+                                            </div>
+                                        <!-- end card-body -->
+                                        </div>
+                                       
+                                        <!--end table-->
+                                    </div>
+                                </div>
+                                <!--edn tab-pane-->
+
+                            </div>
+                            <!--end tab-content-->
+                        </div>
+                    </div>
+                    <!--end card-->
+                </div>
+                <!--end col-->
+            </div>
+            <!--end row-->
+            {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h6 class="card-title mb-3 flex-grow-1 text-start">{{error}}</h6>
+                            
+                           
+                        </div>
+                    </div>
+                 
+
+                </div>
+                </div>
+
+            
+            {%endif%}
+
+            <!-- end modal -->
+
+        </div>
+        <!-- container-fluid -->
+    </div>
+    <!-- End Page-content -->
+
+</div>
+
+<!-- AssignTaskModal -->
+<div id="AssignTaskModal" class="modal fade zoomIn" tabindex="-1" aria-labelledby="zoomInModalLabel" aria-hidden="true"
+    style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zoomInModalLabel">Assign Agent</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="taskID" value="{{ task.id }}">
+                    <div class="col-12">
+
+                        <div class="mb-3">
+                            <label for="Agent" class="form-label">Search Agent</label>
+                            <input type="text" id="staffID" class="form-control" placeholder="Search Agent"
+                                autocomplete='off' />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button id='save_changes' type="button" class="btn btn-primary ">Save Changes</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- Edit status -->
+<div id="Status" class="modal fade zoomIn" tabindex="-1" aria-labelledby="zoomInModalLabel" aria-hidden="true"
+    style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zoomInModalLabel">Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-12">
+
+                        <div class="mb-3">
+                            <label for="StatusName" class="form-label">Select Status</label>
+                            <select id="StatusName" class="form-select">
+
+
+                                <option value='Inprogress'>Inprogress</option>
+                                <option value='Closed'>Closed</option>
+                                {%if request.user.is_admin %}
+                                <option value='Re-Open'>Re-Open</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button id='save_status' type="button" class="btn btn-primary ">Save Changes</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+{% if  perms.Projects.change_priority_task  %}
+<!-- Edit Priority -->
+<div id="Priority" class="modal fade zoomIn" tabindex="-1" aria-labelledby="zoomInModalLabel" aria-hidden="true"
+    style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zoomInModalLabel">Priority</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <input type="hidden" id="taskID" value="{{ task.id }}">
+                    <div class="col-12">
+
+                        <div class="mb-3">
+                            <label for="PriorityName" class="form-label">Select Priority</label>
+                            <select id="PriorityName" class="form-select">
+
+                                <option value='Critical'>Critical</option>
+                                <option value='High'>High</option>
+                                <option value='Medium'>Medium</option>
+                                <option value='Low'>Low</option>
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button id='save_priority' type="button" class="btn btn-primary ">Save Changes</button>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+{% endif %}
+<!-- Add Task Progress -->
+{% if  perms.Projects.add_taskprogess  %}
+<div class="modal fade zoomIn" id="TaskProgressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog modal-md">
+        <div class="modal-content border-0">
+            <div class="modal-header p-3 bg-soft-info">
+                <h5 class="modal-title" id="exampleModalLabel"> Task Progress</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+            </div>
+            <form action="">
+                <div class="modal-body">
+                    <input type="hidden" id="tasksId" />
+                    <div class="row g-3">
+                       
+                        <!--end col-->
+                        <div class="col-md-12">
+                            <div>
+                                <label for="tasksTitle-field" class="form-label">Work Progress</label>
+                                <input type="number" id="WorkCompletion" class="form-control" placeholder="Work Progress(1-100%)" required  />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <div>
+                                    <label for="formFile" class="form-label">Description</label>
+                                    <textarea type="text" class="form-control" placeholder="Description" rows="5" id="WorkDescription"></textarea>
+                                </div>
+                                   
+                            </div>
+                        </div> 
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-light" id="close-modal" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="save_progress">Save Changes</button>
+                       
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- Edit Task Progress -->
+{% if  perms.Projects.change_taskprogess  %}
+<div class="modal fade zoomIn" id="EditTaskProgressModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog modal-md">
+        <div class="modal-content border-0">
+            <div class="modal-header p-3 bg-soft-info">
+                <h5 class="modal-title" id="exampleModalLabel"> Task Progress</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+            </div>
+            <form action="">
+                <div class="modal-body">
+                
+                    <div class="row g-3">
+                       
+                        <!--end col-->
+                        <div class="col-md-12">
+                            <div>
+                                <label for="tasksTitle-field" class="form-label">Work Progress</label>
+                                <input type="number" id="EWorkCompletion" class="form-control" placeholder="Work Progress(1-100%)" required  />
+                                <input type="number" hidden id="EProgressID" class="form-control d-done" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <div>
+                                    <label for="formFile" class="form-label">Description</label>
+                                    <textarea type="text" class="form-control" placeholder="Description" rows="5" id="EWorkDescription"></textarea>
+                                </div>
+                                   
+                            </div>
+                        </div> 
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-light" id="close-modal" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="save_task_progress">Save Changes</button>
+                       
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endif%}
+<!-- Add  Task File -->
+{% if  perms.Projects.add_taskfile or perms.Projects.change_taskfile  %}
+<div class="modal flip upload_file" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+           <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel">Upload Attachment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          <form action="" id="upload_file_form">
+            <div class="modal-body p-5">
+                <input type="hidden" name="" id="fileID">
+                <div class="mb-2">
+                  <label for="FileName" class="form-label">File Name</label>
+                  <input type="text" taskID="{{task.id}}" id="FileName" class='form-control' placeholder="Enter File Name">
+                </div>
+                <div class="mb-2">
+                  <label for="File" class="form-label">Upload File</label>
+                  <input type="file" id="File" class='form-control' >
+                </div>
+               <button type="submit" class="w-100 btn btn-primary">Upload File</button>
+            </div>
+          </form>
+        </div>
+    </div>
+</div>
+{%endif%}
+{% if perms.Projects.change_tasknote or perms.Projects.add_tasknote %}
+<div class="modal flip add_task_note" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myLargeModalLabel">Create New Note</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="new_task_note">
+                <div class="modal-body">
+                    <input type="hidden" name="" id="noteID">
+                
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <div>
+                                    <label for="formFile" class="form-label">Note</label>
+                                    <textarea type="text" class="form-control" placeholder="Description" rows="5" id="project-task-description" TaskIDs={{task.id}} ></textarea>
+                                </div>
+                                   
+                            </div>
+                        </div> 
+                        <!--end col-->
+                    </div>
+                    <!--end row-->
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0);" class="btn btn-link link-success fw-medium" data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</a>
+                    <button type="submit" class="btn btn-primary ">Save changes</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block ScriptBlock %}
+
+<script src={% static 'scripts/admin/tasks/assigntask.js' %}></script>
+<script src={% static 'scripts/admin/tasks/task_file.js' %}></script>
+<script src={% static 'scripts/admin/tasks/task_note.js' %}></script>
+<script src={% static 'scripts/admin/tasks/task_comment.js' %}></script>
+{% endblock %}
